@@ -9,6 +9,7 @@ The project was written using Python version 3.13
 - pillow
 - numpy
 - matplotlib
+- gmpy2
 
 ## Versions
 ### v0.1 Black and White
@@ -31,6 +32,10 @@ Two optimisations are introduced in order to i;prove calculation performance
 ### v 1.0 Precision
 The Mandelbrot algorithm uses the Python 'Decimal' class in place of the 'float' class to improve floating point calculation precision
 **Calculation times are significantly increased**
+
+### gmpy2 branch
+**DO NOT USE**
+The Mandelbrot algorithm is modified to use the *gmpy2* library (optimized, C-coded Python extension module that supports fast multiple-precision arithmetic). On this developers equipment the code crashed Windows consistently (quite possibly due to my limited competence)
 
 ## License
 Copyright (C) 2025  Mike Conroy

@@ -18,34 +18,18 @@
 
 import numpy as np
 import time
+import gmpy2
+from gmpy2 import mpfr, mpc
 from PIL import Image
-from decimal import Decimal, getcontext
 from matplotlib.colors import LinearSegmentedColormap
 from concurrent.futures import ProcessPoolExecutor
 
-# Set the precision for Decimal calculations
-getcontext().prec = 50 # A higher gives a higher precision but increases computation time
-
-# Define a custom complex number class using Decimal
-class DecimalComplex:
-    def __init__(self, real, imag):
-        self.real = Decimal(real)
-        self.imag = Decimal(imag)
-
-    def __abs__(self):
-        return (self.real**2 + self.imag**2).sqrt()
-
-    def __add__(self, other):
-        return DecimalComplex(self.real + other.real, self.imag + other.imag)
-
-    def __mul__(self, other):
-        real = self.real * other.real - self.imag * other.imag
-        imag = self.real * other.imag + self.imag * other.real
-        return DecimalComplex(real, imag)
+# Set the precision for calculations
+gmpy2.get_context().precision = 200  # Set precision to 200 bits
 
 # The core mandelbrot iterative loop to determine if a point is inside or outised the set
 def mandelbrot(c, max_iter):
-    z = DecimalComplex(0, 0)
+    z = mpc(0, 0)
     for n in range(max_iter):
         if abs(z) > 2:
             return n
@@ -55,10 +39,10 @@ def mandelbrot(c, max_iter):
 # Together with the ProcessPoolExecutor code below this function allows for parallelisation
 def compute_row(y):
     row = []
-    imag = imag_min + (Decimal(y) / Decimal(height)) * Decimal(imag_range)
+    imag = imag_min + (mpfr(y) / mpfr(height)) * imag_range
     for x in range(width):
-        real = real_min + (Decimal(x) / Decimal(width)) * real_range
-        c = DecimalComplex(real, imag)
+        real = real_min + (mpfr(x) / mpfr(width)) * real_range
+        c = mpc(real, imag)
         m = mandelbrot(c, iteration_limit)
         if m == iteration_limit:
             # Pixels inside the set are black
@@ -91,10 +75,10 @@ def get_colour(normalised):
     return colourmap_cache[normalised]
 
 # Define the range for the real and imaginary parts of c; the full set is contained in the range (-2.0, -1.2i) to (0.5, 1.2i)
-real_min = Decimal(-0.777120669579820285689)
-real_max = Decimal(-0.777120217041497188109)
-imag_min = Decimal(0.126857111509958518549)
-imag_max = Decimal(0.126857366062765260939)
+real_min = mpfr(-0.777120669579820285689)
+real_max = mpfr(-0.777120217041497188109)
+imag_min = mpfr(0.126857111509958518549)
+imag_max = mpfr(0.126857366062765260939)
 
 # Algorithm
 iteration_limit = 5000 # The higher the max iterations, the greater the precision but the longer it will take
@@ -116,9 +100,9 @@ imag_range = imag_max - imag_min
 
 # Together with the compute_row function above this code allows for parallelisation
 if __name__ == "__main__":
-    
+
     # Start the timer
-    start_time = time.time()  # Start the timer
+    start_time = time.time()
 
     # Initialise the image array
     image_array = np.zeros((height, width, 3), dtype=np.uint8)
@@ -133,7 +117,7 @@ if __name__ == "__main__":
             image_array[y, x] = colour
 
     end_time = time.time()  # End the timer
-    print(f"Execution time: {end_time - start_time:.2f} seconds")  # Print the elapsed time
+    print(f"Execution time: {end_time - start_time:.2f} seconds")
 
     # Create the image from the array
     image = Image.fromarray(image_array, 'RGB')

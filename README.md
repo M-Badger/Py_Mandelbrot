@@ -19,6 +19,9 @@ Draws a simple Mandelbrot image where pixels outside the set are different shade
 ### v0.3 Colourmap
 Draws a simple colourised version of the Mandelbrot set using a colour map. Colour maps from *matplotlib* are used ('colormap' class)
 
+### v0.4 Scaled Colourmap
+The width of the created image is scaled based on the complex points provided and the height of the image such that the ratios match
+
 ## License
 Copyright (C) 2025  Mike Conroy
 The author hereby disclaims all copyright interest in the program “Badger Py Mandelbrot”

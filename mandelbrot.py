@@ -22,9 +22,9 @@ from matplotlib.colors import LinearSegmentedColormap
 
 def mandelbrot(c, max_iter):
     z = 0
-    for iterations in range(max_iter):
+    for n in range(max_iter):
         if abs(z) > 2:
-            return iterations
+            return n
         z = z*z + c
     return max_iter
 
@@ -39,11 +39,16 @@ def get_new_colormap():
     # Create the colormap
     return LinearSegmentedColormap.from_list("CustomColormap", colors)
 
+# Define the range for the real and imaginary parts of c; the full set is contained in the range (-2.0, -1.2i) to (0.5, 1.2i)
+real_min, real_max = -0.777120669579820285689, -0.777120217041497188109
+imag_min, imag_max = 0.126857111509958518549, 0.126857366062765260939
+
 # Algorithm
-iteration_limit = 30 # The higher the max iterations, the less banding will be visible but the more it will look like a 2-colour plot
+iteration_limit = 5000 # The higher the max iterations, the greater the precision but the longer it will take
 
 # Image
-width, height = 1000, 960 # The width/height ratio matches the range of the real and imaginary ranges set in the for loops below, for c: real part from -2 to 0.5, imaginary part from -1.2 to 1.2
+width = 1000
+height = int(width * (abs(imag_max - imag_min) / (real_max - real_min))) # Image height is scaled such that the width/height ratio matches the real and imaginary ranges set in the variables above
 image = Image.new('RGB', (width, height)) # Create image in 'RGB' mode
 pixels = image.load()
 
@@ -58,15 +63,16 @@ start_time = time.time()
 
 for x in range(width):
     for y in range(height):
-        real = -2 + (x / width) * 2.5  # Real part: -2 to 0.5
-        imag = -1.2 + (y / height) * 2.4  # Imaginary part: -1.2 to 1.2
+        # Map pixel coordinates to the complex plane
+        real = real_min + (x / width) * (real_max - real_min)
+        imag = imag_min + (y / height) * (imag_max - imag_min)
         c = complex(real, imag)
         m = mandelbrot(c, iteration_limit)
         if m == iteration_limit:
             # Pixels inside the set are black
             pixels[x, y] = (0, 0, 0)
         else:
-            # Normalise the iteration count to [0, 1] for colormap
+            # Normalize the iteration count to [0, 1] for colormap
             normalised = m / iteration_limit
             # Get RGB values from the colormap
             r, g, b, _ = colormap(normalised)
@@ -76,7 +82,7 @@ for x in range(width):
 end_time = time.time()
 print(f"Execution time: {end_time - start_time:.2f} seconds")
 
-# Transpose the image vertically because it is created from bottom left to top right ((-2, -1.2) to (0.5, 1.2)) but applied to the image canvas top left to bottom right
+# Transpose the image vertically because it is created from bottom left to top right ((real_min, imag_min) to (real_max, imag_max)) but applied to the image canvas top left to bottom right
 image = image.transpose(method = Image.Transpose.FLIP_TOP_BOTTOM)
 image.save('mandelbrot.png')
 image.show()

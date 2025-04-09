@@ -7,6 +7,7 @@ The project was written using Python version 3.13
 
 ## Requirements
 - pillow
+- numpy
 - matplotlib
 
 ## Versions
@@ -21,6 +22,11 @@ Draws a simple colourised version of the Mandelbrot set using a colour map. Colo
 
 ### v0.4 Scaled Colourmap
 The width of the created image is scaled based on the complex points provided and the height of the image such that the ratios match
+
+### v0.5 Optimised
+Two optimisations are introduced in order to i;prove calculation performance
+1. Multitasking using 'ProcessPoolExecutor' from 'concurrent.futures'
+2. Caching the translation of iteration results into colours to avoid identical repeat calls to matplotlib interpolation code
 
 ## License
 Copyright (C) 2025  Mike Conroy

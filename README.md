@@ -7,7 +7,7 @@ The project was written using Python version 3.13
 
 ## Requirements
 - pillow
-- numpy
+- matplotlib
 
 ## Versions
 ### v0.1 Black and White
@@ -15,6 +15,9 @@ Draws a very simple Mandelbrot image with white assigned to pixels in the set an
 
 ### v0.2 Greyscale
 Draws a simple Mandelbrot image where pixels outside the set are different shades of grey depending on the number of iterations required to confirm the point is outside the set
+
+### v0.3 Colourmap
+Draws a simple colourised version of the Mandelbrot set using a colour map. Colour maps from *matplotlib* are used ('colormap' class)
 
 ## License
 Copyright (C) 2025  Mike Conroy

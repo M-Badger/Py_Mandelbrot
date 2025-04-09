@@ -16,26 +16,42 @@
 #  If not, see <https://www.gnu.org/licenses/>.
 #  ========================================================================
 
-import numpy as np
-import time
 from PIL import Image
+import time
+from matplotlib.colors import LinearSegmentedColormap
 
 def mandelbrot(c, max_iter):
     z = 0
     for iterations in range(max_iter):
         if abs(z) > 2:
-            # Return the normalised escape value
-            return iterations - np.log(np.log(abs(z))) / np.log(2)
+            return iterations
         z = z*z + c
     return max_iter
+
+def get_new_colormap():
+    # Define the colors and their positions using RGB values
+    colors = [
+        (0.0, (0.0, 0.0, 0.0)),  # Black
+        (0.1, (1.0, 0.0, 0.0)),  # Red
+        (0.3, (1.0, 1.0, 0.0)),  # Yellow
+        (1.0, (1.0, 1.0, 1.0))   # White
+    ]
+    # Create the colormap
+    return LinearSegmentedColormap.from_list("CustomColormap", colors)
 
 # Algorithm
 iteration_limit = 30 # The higher the max iterations, the less banding will be visible but the more it will look like a 2-colour plot
 
 # Image
 width, height = 1000, 960 # The width/height ratio matches the range of the real and imaginary ranges set in the for loops below, for c: real part from -2 to 0.5, imaginary part from -1.2 to 1.2
-image = Image.new('L', (width, height)) # Create image in 'L' mode for greyscale (L = luminance)
+image = Image.new('RGB', (width, height)) # Create image in 'RGB' mode
 pixels = image.load()
+
+# Use a colormap from matplotlib, such as 'binary', 'rainbow', 'viridis', 'plasma', 'inferno', etc. For a full list, see https://matplotlib.org/stable/users/explain/colors/colormaps.html
+# colormap = cm.colormaps['YlOrRd']
+
+# Or create a new colormap
+colormap = get_new_colormap()
 
 # Start the timer
 start_time = time.time()
@@ -45,10 +61,17 @@ for x in range(width):
         real = -2 + (x / width) * 2.5  # Real part: -2 to 0.5
         imag = -1.2 + (y / height) * 2.4  # Imaginary part: -1.2 to 1.2
         c = complex(real, imag)
-        m = mandelbrot(c, 256)
-        # Normalize the value to [0, 255] for grayscale luminance
-        grayscale = int(255 * (m / iteration_limit))
-        pixels[x, y] = grayscale
+        m = mandelbrot(c, iteration_limit)
+        if m == iteration_limit:
+            # Pixels inside the set are black
+            pixels[x, y] = (0, 0, 0)
+        else:
+            # Normalise the iteration count to [0, 1] for colormap
+            normalised = m / iteration_limit
+            # Get RGB values from the colormap
+            r, g, b, _ = colormap(normalised)
+            # Convert to 8-bit integers
+            pixels[x, y] = (int(r * 255), int(g * 255), int(b * 255))
 
 end_time = time.time()
 print(f"Execution time: {end_time - start_time:.2f} seconds")

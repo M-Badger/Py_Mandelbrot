@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Created images
+mandelbrot.png
+
 # C extensions
 *.so
 

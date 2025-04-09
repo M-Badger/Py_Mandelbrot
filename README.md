@@ -28,6 +28,10 @@ Two optimisations are introduced in order to i;prove calculation performance
 1. Multitasking using 'ProcessPoolExecutor' from 'concurrent.futures'
 2. Caching the translation of iteration results into colours to avoid identical repeat calls to matplotlib interpolation code
 
+### v 1.0 Precision
+The Mandelbrot algorithm uses the Python 'Decimal' class in place of the 'float' class to improve floating point calculation precision
+**Calculation times are significantly increased**
+
 ## License
 Copyright (C) 2025  Mike Conroy
 The author hereby disclaims all copyright interest in the program “Badger Py Mandelbrot”

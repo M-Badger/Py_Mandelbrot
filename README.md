@@ -5,6 +5,13 @@ This project was undertaken to learn Python syntax and basic Python skills
 ## Python Version
 The project was written using Python version 3.13
 
+## Requirements
+- pillow
+
+## Versions
+### v0.1 Black and White
+Draws a very simple Mandelbrot image with white assigned to pixels in the set and black assigned to pixels outside the set
+
 ## License
 Copyright (C) 2025  Mike Conroy
 The author hereby disclaims all copyright interest in the program “Badger Py Mandelbrot”
